@@ -28,6 +28,7 @@ PLATFORMS
 
 DEPENDENCIES
   awesome_print
+  bundler
   coderay
   minitest (~> 5.13.0)
   pry

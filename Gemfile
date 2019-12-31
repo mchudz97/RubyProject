@@ -9,6 +9,7 @@ group :development do
   gem 'awesome_print', :require => 'ap'
   gem 'pry'
   gem 'coderay'
+  gem 'bundler'
 end
 
 group :test do
