@@ -1,6 +1,66 @@
 require_relative '../lib/statki/board.rb'
+require_relative '../lib/statki/player.rb'
 
 RSpec.describe 'Statki' do
+    context 'testing player placeShip with Board mock' do
+        it 'when is no problem in playerBoard  with Board mock' do
+            boardDouble = instance_double('Board')
+            allow(boardDouble).to receive(:addShip).with(any_args).and_return(true)
+            p = Player.new
+            p.playerBoard = boardDouble
+            expect(p.placeShip("A1","A3")).to eq(true)
+            
+        end
+        
+        it 'when playerBoard returns false' do
+            boardDouble = instance_double('Board')
+            allow(boardDouble).to receive(:addShip).with(any_args).and_return(false)
+
+            p = Player.new
+            p.playerBoard = boardDouble
+            expect{p.placeShip("A1", "A3")}.to raise_error(ArgumentError)
+        end
+    end
+    context 'testing player attackPlayer with Board mock' do
+        it 'when enemy is hit' do
+            boardDouble = instance_double('Board')
+            allow(boardDouble). to receive(:attacked).with(any_args).and_return(true)
+
+            p1 = Player.new
+            p2 = Player.new
+            p2.playerBoard = boardDouble
+            expect(p1.attackPlayer(p2, "A1")).to eq(true)
+        end
+        it 'when enemy is not hit' do
+            boardDouble = instance_double('Board')
+            allow(boardDouble). to receive(:attacked).with(any_args).and_return(false)
+
+            p1 = Player.new
+            p2 = Player.new
+            p2.playerBoard = boardDouble
+            expect(p1.attackPlayer(p2, "A1")).to eq(false)
+        end
+    end
+    context 'testing player won? with Board mock' do
+        it 'when won' do
+            boardDouble = instance_double('Board')
+            allow(boardDouble). to receive(:isEnd).with(any_args).and_return(true)
+
+            p1 = Player.new
+            p2 = Player.new
+            p2.playerBoard = boardDouble
+            expect(p1.won?(p2)).to eq(true)
+        end
+        it 'when not won' do
+            boardDouble = instance_double('Board')
+            allow(boardDouble). to receive(:isEnd).with(any_args).and_return(false)
+
+            p1 = Player.new
+            p2 = Player.new
+            p2.playerBoard = boardDouble
+            expect(p1.won?(p2)).to eq(false)
+        end
+    end
    
     context '.returnPositions Board method' do
         it 'when not in line' do
@@ -179,5 +239,62 @@ RSpec.describe 'Statki' do
             expect(b.returnBoardAsString()).to eq(testString)
         end
     end
+    context '.placeShip Player method ' do
+        it 'when incorrect input #1' do
+            p = Player.new
+            expect{p.placeShip(1, 2)}.to raise_error(ArgumentError)
+        end
+        it 'when incorrect input #2' do
+            p = Player.new
+            expect{p.placeShip("A", 2)}.to raise_error(ArgumentError)
+        end
+        it 'when incorrect input #3' do
+            p = Player.new
+            expect{p.placeShip("A1", 2)}.to raise_error(ArgumentError)
+        end
+        it 'when incorrect input #4' do
+            p = Player.new
+            expect{p.placeShip(1, "A")}.to raise_error(ArgumentError)
+        end
+        it 'when incorrect input #5' do
+            p = Player.new
+            expect{p.placeShip(1, "A1")}.to raise_error(ArgumentError)
+        end
+        it 'when correct input and incorrect ship size' do
+            p = Player.new
+            expect{p.placeShip("A0", "D3")}.to raise_error(ArgumentError)
+        end
+        it 'when correct input and ship size' do
+            p = Player.new
+            expect(p.placeShip("A0", "A3")).to eq(true)
+        end
+    end
+    context '.attackPlayer Player method' do
+        it 'when incorrect input #1' do
+            p = Player.new
+            expect{p.attackPlayer(1,1)}.to raise_error(ArgumentError)
+        end
+        it 'when incorrect input #2' do
+            p = Player.new
+            expect{p.attackPlayer(1,"B")}.to raise_error(ArgumentError)
+        end
+        it 'when incorrect input #3' do
+            p = Player.new
+            expect{p.attackPlayer(1,"B1")}.to raise_error(ArgumentError)
+        end
+        it 'when incorrect input #4' do
+            p1 = Player.new
+            p2 = Player.new
+            expect{p1.attackPlayer(p2,1)}.to raise_error(ArgumentError)
+        end
+    end
+    context '.won? Player method' do
+        it 'when incorrect input' do
+            p = Player.new
+            expect{p.won?("AAAAAAA")}.to raise_error(ArgumentError)
+        end
+    end
+
+
 
 end
